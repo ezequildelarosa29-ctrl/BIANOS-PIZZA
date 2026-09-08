@@ -1,54 +1,25 @@
-function showMsg(text, type) {
-  document.getElementById('msgBox').innerHTML = `<div class="msg msg-${type}">${text}</div>`;
-}
-
+"use strict";
+function showMsg(text,type="error") { const box=document.getElementById("msgBox"); if(box) box.innerHTML=`<div class="msg msg-${type}">${text}</div>`; }
 async function loadDropdowns() {
-  const [ingredients, suppliers] = await Promise.all([
-    apiCall('getIngredients', {}),
-    apiCall('getSuppliers', {})
-  ]);
-  document.getElementById('siIngredient').innerHTML = ingredients.map(i => `<option value="${i.ID}">${i.Name} (${i.Unit}) - Stock: ${i.Stock}</option>`).join('');
-  document.getElementById('siSupplier').innerHTML = suppliers.map(s => `<option value="${s.ID}">${s.Name}</option>`).join('');
+  const ing = await apiCall("getIngredients", {});
+  const sup = await apiCall("getSuppliers", {});
+  if (ing?.error) throw new Error(ing.error);
+  if (sup?.error) throw new Error(sup.error);
+  const ingredientList = Array.isArray(ing) ? ing : [];
+  const supplierList = Array.isArray(sup) ? sup : [];
+  const iSel=document.getElementById("siIngredient"), sSel=document.getElementById("siSupplier");
+  if(iSel) iSel.innerHTML=ingredientList.map(i=>`<option value="${i.ID}">${i.Name} (${i.Unit}) - Stock: ${i.Stock}</option>`).join("");
+  if(sSel) sSel.innerHTML=supplierList.map(s=>`<option value="${s.ID}">${s.Name}</option>`).join("");
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = requireLogin();
-  if (!user) return;
-  renderNav('stock-in', user);
-
-  await loadDropdowns();
-
-  const modal = document.getElementById('ingredientModal');
-  document.getElementById('addIngredientBtn').addEventListener('click', () => modal.classList.add('open'));
-  document.getElementById('cancelIngredientBtn').addEventListener('click', () => modal.classList.remove('open'));
-
-  document.getElementById('ingredientForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const res = await apiCall('addIngredient', {
-      name: document.getElementById('iName').value,
-      unit: document.getElementById('iUnit').value,
-      stock: document.getElementById('iStock').value,
-      cost: document.getElementById('iCost').value,
-      reorderLevel: document.getElementById('iReorder').value
-    });
-    if (res.error) { alert('Error: ' + res.error); return; }
-    modal.classList.remove('open');
-    document.getElementById('ingredientForm').reset();
-    await loadDropdowns();
-  });
-
-  document.getElementById('stockInForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const res = await apiCall('stockIn', {
-      ingredientId: document.getElementById('siIngredient').value,
-      supplierId: document.getElementById('siSupplier').value,
-      quantity: document.getElementById('siQty').value,
-      costPrice: document.getElementById('siCost').value,
-      referenceNo: document.getElementById('siRef').value
-    });
-    if (res.error) { showMsg('Error: ' + res.error, 'error'); return; }
-    showMsg('Stock in recorded successfully.', 'ok');
-    document.getElementById('stockInForm').reset();
-    await loadDropdowns();
-  });
+document.addEventListener("DOMContentLoaded", async()=>{
+  const user=requireLogin(); if(!user)return; renderNav("stock-in",user);
+  const modal=document.getElementById("ingredientModal"), add=document.getElementById("addIngredientBtn"), cancel=document.getElementById("cancelIngredientBtn"), form=document.getElementById("ingredientForm"), stockForm=document.getElementById("stockInForm");
+  // Bind UI FIRST so modal always opens even if API loading fails.
+  if(add&&modal)add.addEventListener("click",()=>modal.classList.add("open"));
+  if(cancel&&modal)cancel.addEventListener("click",()=>modal.classList.remove("open"));
+  if(modal)modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});
+  if(form)form.addEventListener("submit",async e=>{e.preventDefault();try{const r=await apiCall("addIngredient",{name:iName.value.trim(),unit:iUnit.value.trim(),stock:iStock.value,cost:iCost.value,reorderLevel:iReorder.value});if(r.error){showMsg("Error: "+r.error);return;}modal?.classList.remove("open");form.reset();await loadDropdowns();showMsg("Ingredient added successfully.","ok");}catch(err){showMsg(err.message)}});
+  if(stockForm)stockForm.addEventListener("submit",async e=>{e.preventDefault();try{const r=await apiCall("stockIn",{ingredientId:siIngredient.value,supplierId:siSupplier.value,quantity:siQty.value,costPrice:siCost.value,referenceNo:siRef.value.trim()});if(r.error){showMsg("Error: "+r.error);return;}showMsg("Stock in recorded successfully.","ok");stockForm.reset();await loadDropdowns();}catch(err){showMsg(err.message)}});
+  try{await loadDropdowns();}catch(err){showMsg("Could not load ingredients/suppliers: "+err.message);}
 });
