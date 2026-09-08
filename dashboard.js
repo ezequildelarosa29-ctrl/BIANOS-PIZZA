@@ -1,27 +1,2 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = requireLogin();
-  if (!user) return;
-  renderNav('dashboard', user);
-
-  const data = await apiCall('getDashboard', {});
-  if (data.error) return;
-
-  document.getElementById('statMenu').textContent = data.totalMenuItems;
-  document.getElementById('statStock').textContent = data.totalIngredientStock;
-  document.getElementById('statLow').textContent = data.lowStock;
-  document.getElementById('statSales').textContent = '\u20B1' + Number(data.totalSales).toLocaleString();
-
-  const tbody = document.getElementById('recentBody');
-  if (!data.recent.length) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-note">No activity yet.</td></tr>';
-  } else {
-    tbody.innerHTML = data.recent.map(r => `
-      <tr>
-        <td>${new Date(r.date).toLocaleDateString()}</td>
-        <td>${r.type}</td>
-        <td>${r.item}</td>
-        <td>${r.qty}</td>
-      </tr>
-    `).join('');
-  }
-});
+"use strict";
+document.addEventListener("DOMContentLoaded",async()=>{const user=requireLogin();if(!user)return;renderNav("dashboard",user);try{const data=await apiCall("getDashboard",{});if(data?.error)throw new Error(data.error);document.getElementById("statMenu").textContent=data.totalMenuItems??0;document.getElementById("statStock").textContent=data.totalIngredientStock??0;document.getElementById("statLow").textContent=data.lowStock??0;document.getElementById("statSales").textContent="₱"+Number(data.totalSales||0).toLocaleString();const tb=document.getElementById("recentBody");const recent=Array.isArray(data.recent)?data.recent:[];tb.innerHTML=recent.length?recent.map(r=>`<tr><td>${new Date(r.date).toLocaleDateString()}</td><td>${r.type||""}</td><td>${r.item||""}</td><td>${r.qty||""}</td></tr>`).join(""):'<tr><td colspan="4" class="empty-note">No activity yet.</td></tr>';}catch(err){console.error(err);const b=document.getElementById("recentBody");if(b)b.innerHTML=`<tr><td colspan="4" class="empty-note">Unable to load dashboard: ${err.message}</td></tr>`;}});
