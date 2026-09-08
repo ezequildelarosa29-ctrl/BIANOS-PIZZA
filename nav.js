@@ -7,32 +7,60 @@ function renderNav(activePage, user) {
     { id: 'suppliers', label: 'Suppliers', href: 'suppliers.html' },
     { id: 'reports', label: 'Reports', href: 'reports.html' }
   ];
-  if (user.role === 'admin') {
+
+  if (user && user.role === 'admin') {
     links.push({ id: 'users', label: 'Users', href: 'users.html' });
   }
 
-  const navHtml = links.map(l =>
-    `<a href="${l.href}" class="${l.id === activePage ? 'active' : ''}">${l.label}</a>`
-  ).join('');
+  const navHtml = links.map(link => `
+    <a href="${link.href}" class="${link.id === activePage ? 'active' : ''}">
+      ${link.label}
+    </a>
+  `).join('');
 
-  document.getElementById('app-shell-nav').innerHTML = `
+  const root = document.getElementById('app-shell-nav');
+  if (!root) return;
+
+  root.innerHTML = `
     <div class="topbar">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <button class="hamburger" id="hamburgerBtn">&#9776;</button>
+      <div style="display:flex;align-items:center;gap:11px;">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Open navigation">☰</button>
         <div class="brand">Biano's Pizza</div>
       </div>
+
       <div class="user-info">
-        <span class="username">${user.username} | ${user.role}</span>
-        <button class="logout-btn" id="logoutBtn">Logout</button>
+        <span class="username">${escapeHtml(user?.username || 'Staff')} · ${escapeHtml(user?.role || '')}</span>
+        <button class="logout-btn" id="logoutBtn">Log out</button>
       </div>
     </div>
-    <div class="sidebar" id="sidebarNav">
+
+    <aside class="sidebar" id="sidebarNav">
       <nav>${navHtml}</nav>
-    </div>
+    </aside>
   `;
 
-  document.getElementById('logoutBtn').addEventListener('click', doLogout);
-  document.getElementById('hamburgerBtn').addEventListener('click', () => {
-    document.getElementById('sidebarNav').classList.toggle('open');
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  if (hamburgerBtn) {
+    hamburgerBtn.addEventListener('click', () => {
+      document.getElementById('sidebarNav')?.classList.toggle('open');
+    });
+  }
+
+  document.querySelectorAll('#sidebarNav a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('sidebarNav')?.classList.remove('open');
+    });
   });
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
