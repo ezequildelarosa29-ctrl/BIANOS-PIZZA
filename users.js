@@ -1,41 +1,6 @@
-function renderUsers(list) {
-  const tbody = document.getElementById('usersBody');
-  tbody.innerHTML = list.map(u => `
-    <tr>
-      <td>${u.ID}</td>
-      <td>${u.Username}</td>
-      <td>${u.Role}</td>
-      <td><span class="status-tag status-active">${u.Status}</span></td>
-    </tr>
-  `).join('');
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = requireLogin();
-  if (!user) return;
-  requireAdmin(user);
-  renderNav('users', user);
-
-  let users = await apiCall('getUsers', {});
-  if (!Array.isArray(users)) users = [];
-  renderUsers(users);
-
-  const modal = document.getElementById('userModal');
-  document.getElementById('addUserBtn').addEventListener('click', () => modal.classList.add('open'));
-  document.getElementById('cancelUserBtn').addEventListener('click', () => modal.classList.remove('open'));
-
-  document.getElementById('userForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const res = await apiCall('addUser', {
-      username: document.getElementById('uUsername').value,
-      password: document.getElementById('uPassword').value,
-      email: document.getElementById('uEmail').value,
-      role: document.getElementById('uRole').value
-    });
-    if (res.error) { alert('Error: ' + res.error); return; }
-    modal.classList.remove('open');
-    document.getElementById('userForm').reset();
-    users = await apiCall('getUsers', {});
-    renderUsers(users);
-  });
-});
+"use strict";
+function renderUsers(list){const tb=document.getElementById("usersBody");if(!tb)return;if(!Array.isArray(list)||!list.length){tb.innerHTML='<tr><td colspan="4" class="empty-note">No users found.</td></tr>';return;}tb.innerHTML=list.map(u=>`<tr><td>${u.ID||""}</td><td>${u.Username||""}</td><td>${u.Role||""}</td><td><span class="status-tag status-active">${u.Status||"active"}</span></td></tr>`).join("");}
+document.addEventListener("DOMContentLoaded",async()=>{const user=requireLogin();if(!user)return;if(!requireAdmin(user))return;renderNav("users",user);const modal=document.getElementById("userModal"),add=document.getElementById("addUserBtn"),cancel=document.getElementById("cancelUserBtn"),form=document.getElementById("userForm");
+// Bind modal controls BEFORE API loading.
+if(add&&modal)add.addEventListener("click",()=>modal.classList.add("open"));if(cancel&&modal)cancel.addEventListener("click",()=>modal.classList.remove("open"));if(modal)modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});
+let users=[];if(form)form.addEventListener("submit",async e=>{e.preventDefault();const btn=form.querySelector('button[type="submit"]');if(btn)btn.disabled=true;try{const r=await apiCall("addUser",{username:document.getElementById("uUsername").value.trim(),password:document.getElementById("uPassword").value,email:document.getElementById("uEmail").value.trim(),role:document.getElementById("uRole").value});if(r.error){alert("Error: "+r.error);return;}modal?.classList.remove("open");form.reset();await load();alert("User added successfully.");}catch(err){alert(err.message)}finally{if(btn)btn.disabled=false;}});async function load(){try{const r=await apiCall("getUsers",{});if(r?.error)throw new Error(r.error);users=Array.isArray(r)?r:[];renderUsers(users);}catch(err){users=[];renderUsers([]);console.error(err);alert("Could not load users: "+err.message);}}await load();});
