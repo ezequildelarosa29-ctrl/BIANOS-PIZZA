@@ -3,7 +3,7 @@
 // ============================================================
 "use strict";
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzxcoS4qMl5gx_CKGlpjx-zVFZ8D-uftZW4QDMdzM7WiNyU_nS9WVm5pdPSV_NwN5mWOQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzjdXveWrGSg1X24sZ7UJVKq--x9jUqA7iU0Abl9m7308i817BMUqvLK1RTVsB50RtX0g/exec";
 
 async function apiCall(action, payload = {}, redirectOnInvalidSession = true) {
   const token = localStorage.getItem("bianos_token") || "";
