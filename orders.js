@@ -1,42 +1,7 @@
-function showMsg(text, type) {
-  document.getElementById('msgBox').innerHTML = `<div class="msg msg-${type}">${text}</div>`;
-}
-
-let menuItems = [];
-
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = requireLogin();
-  if (!user) return;
-  renderNav('orders', user);
-
-  menuItems = await apiCall('getMenu', {});
-  const available = menuItems.filter(m => m.Status === 'available');
-  document.getElementById('oMenuItem').innerHTML = available.map(m => `<option value="${m.ID}" data-price="${m.Price}">${m.Name} (${m.Size}) - \u20B1${m.Price}</option>`).join('');
-
-  document.getElementById('oMenuItem').addEventListener('change', (e) => {
-    const price = e.target.selectedOptions[0].dataset.price;
-    document.getElementById('oPrice').value = price;
-  });
-  // pre-fill price for first item
-  if (available.length) document.getElementById('oPrice').value = available[0].Price;
-
-  document.getElementById('orderForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const res = await apiCall('placeOrder', {
-      menuItemId: document.getElementById('oMenuItem').value,
-      quantity: document.getElementById('oQty').value,
-      sellingPrice: document.getElementById('oPrice').value,
-      orderType: document.getElementById('oType').value,
-      customerName: document.getElementById('oCustomer').value,
-      referenceNo: document.getElementById('oRef').value
-    });
-    if (res.error) {
-      const messages = { item_unavailable: 'That menu item is currently unavailable.' };
-      showMsg('Error: ' + (messages[res.error] || res.error), 'error');
-      return;
-    }
-    showMsg('Order saved successfully.', 'ok');
-    document.getElementById('orderForm').reset();
-    if (available.length) document.getElementById('oPrice').value = available[0].Price;
-  });
-});
+"use strict";
+function showMsg(text,type="error"){const b=document.getElementById("msgBox");if(b)b.innerHTML=`<div class="msg msg-${type}">${text}</div>`;}
+let menuItems=[];
+document.addEventListener("DOMContentLoaded",async()=>{const user=requireLogin();if(!user)return;renderNav("orders",user);const form=document.getElementById("orderForm"),sel=document.getElementById("oMenuItem");
+if(form)form.addEventListener("submit",async e=>{e.preventDefault();try{const r=await apiCall("placeOrder",{menuItemId:oMenuItem.value,quantity:oQty.value,sellingPrice:oPrice.value,orderType:oType.value,customerName:oCustomer.value.trim(),referenceNo:oRef.value.trim()});if(r.error){showMsg("Error: "+(r.error==="item_unavailable"?"That menu item is unavailable.":r.error));return;}showMsg("Order saved successfully.","ok");form.reset();loadMenu();}catch(err){showMsg(err.message)}});
+if(sel)sel.addEventListener("change",()=>{const opt=sel.selectedOptions[0];if(opt&&opt.dataset.price)document.getElementById("oPrice").value=opt.dataset.price;});
+async function loadMenu(){try{const r=await apiCall("getMenu",{});if(r?.error)throw new Error(r.error);menuItems=Array.isArray(r)?r:[];const available=menuItems.filter(m=>String(m.Status).toLowerCase()==="available");if(sel)sel.innerHTML=available.map(m=>`<option value="${m.ID}" data-price="${m.Price}">${m.Name} (${m.Size}) - ₱${m.Price}</option>`).join("");if(available.length)document.getElementById("oPrice").value=available[0].Price;}catch(err){if(sel)sel.innerHTML="";showMsg("Could not load menu: "+err.message);}}await loadMenu();});
