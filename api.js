@@ -1,5 +1,5 @@
 // ====== SET THIS AFTER YOU DEPLOY THE APPS SCRIPT WEB APP ======
-const API_URL = "https://script.google.com/macros/s/AKfycbzxcoS4qMl5gx_CKGlpjx-zVFZ8D-uftZW4QDMdzM7WiNyU_nS9WVm5pdPSV_NwN5mWOQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwOLVof34QaHTQ6TFwRtEZ-wuUDgLFEpO9xb8sGJ-cF6W6oGST2AsP9svsBGRB33I6wWA/exec";
 // e.g. "https://script.google.com/macros/s/AKfycb.../exec"
 
 async function apiCall(action, payload = {}) {
