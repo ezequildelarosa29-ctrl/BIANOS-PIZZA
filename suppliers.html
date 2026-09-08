@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biano's Pizza — Suppliers</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div id="app-shell-nav"></div>
+    <div class="main">
+      <div class="content">
+        <h2 class="page-title">Suppliers</h2>
+        <div class="toolbar">
+          <span></span>
+          <button class="btn-small" id="addSupplierBtn">+ Add supplier</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Supplier</th><th>Contact</th><th>Phone</th><th>Status</th></tr></thead>
+            <tbody id="suppliersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="supplierModal">
+    <div class="modal">
+      <h3>Add supplier</h3>
+      <form id="supplierForm">
+        <div class="field"><label>Supplier Name</label><input type="text" id="sName" required placeholder="e.g. Cebu Cheese Co."></div>
+        <div class="field"><label>Contact Person</label><input type="text" id="sContact"></div>
+        <div class="field"><label>Phone</label><input type="text" id="sPhone"></div>
+        <div class="field"><label>Email</label><input type="email" id="sEmail"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-cancel" id="cancelSupplierBtn">Cancel</button>
+          <button type="submit" class="btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/suppliers.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biano's Pizza — Verify it's you</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="ticket-wrap">
+    <div class="ticket">
+      <div class="ticket-head">
+        <div class="mark"></div>
+        <h1>Biano's Pizza</h1>
+        <p>Order &amp; Inventory Desk</p>
+      </div>
+      <div class="ticket-body">
+        <div class="form-heading">
+          <h2>Verify it's you</h2>
+          <p>Enter the 6-digit code sent to your email.</p>
+        </div>
+
+        <div id="msgBox"></div>
+
+        <form id="otpForm">
+          <div class="otp-boxes">
+            <input type="text" maxlength="1" class="otp-digit">
+            <input type="text" maxlength="1" class="otp-digit">
+            <input type="text" maxlength="1" class="otp-digit">
+            <input type="text" maxlength="1" class="otp-digit">
+            <input type="text" maxlength="1" class="otp-digit">
+            <input type="text" maxlength="1" class="otp-digit">
+          </div>
+          <p style="text-align:center;font-size:12px;color:var(--ink-faint);margin-bottom:18px;" id="timerText">Code expires in 05:00</p>
+          <button type="submit" class="btn" id="verifyBtn">Verify code</button>
+        </form>
+        <a href="#" class="btn-link" id="resendLink">Didn't get a code? Resend</a>
+        <a href="index.html" class="btn-link">Back to sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/twofa.js"></script>
+</body>
+</html>

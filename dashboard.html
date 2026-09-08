@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biano's Pizza — Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div id="app-shell-nav"></div>
+    <div class="main">
+      <div class="content">
+        <h2 class="page-title">Dashboard</h2>
+
+        <div class="stat-grid">
+          <div class="stat-card"><div class="label">Menu items</div><div class="value" id="statMenu">-</div></div>
+          <div class="stat-card"><div class="label">Ingredient stock</div><div class="value" id="statStock">-</div></div>
+          <div class="stat-card"><div class="label">Low stock</div><div class="value" id="statLow">-</div></div>
+          <div class="stat-card"><div class="label">Total sales</div><div class="value" id="statSales">-</div></div>
+        </div>
+
+        <h2 class="page-title" style="font-size:14px;">Recent Activity</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Type</th><th>Item</th><th>Qty</th></tr></thead>
+            <tbody id="recentBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

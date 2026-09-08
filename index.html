@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biano's Pizza — Sign in</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="ticket-wrap">
+    <div class="ticket">
+      <div class="ticket-head">
+        <div class="mark"></div>
+        <h1>Biano's Pizza</h1>
+        <p>Order &amp; Inventory Desk</p>
+      </div>
+      <div class="ticket-body">
+        <div class="form-heading">
+          <h2>Sign in</h2>
+          <p>Use your staff account to open the register.</p>
+        </div>
+
+        <div id="msgBox"></div>
+
+        <form id="loginForm">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" id="username" required>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="password" required>
+          </div>
+
+          <div class="captcha-box">
+            <span id="captchaQuestion">Loading captcha…</span>
+            <input type="text" id="captchaAnswer" placeholder="answer">
+          </div>
+
+          <button type="submit" class="btn" id="loginBtn">Log in</button>
+        </form>
+        <a href="#" class="btn-link">Forgot password? Contact your administrator</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>
